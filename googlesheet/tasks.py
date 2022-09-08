@@ -1,11 +1,16 @@
 import requests
 import datetime
 import gspread
+import telepot
 
+from environs import Env
 from config.celery import app
 from xml.etree import ElementTree
 from googlesheet.models import Receipt
 from decimal import Decimal
+
+env = Env()
+env.read_env()
 
 
 #######################
@@ -50,3 +55,15 @@ def update_data():  # Celery задача для обновления, созд�
     if receipts.count() > len(order_id):  # для удаления объектов
         ids = set(receipts) - set(order_id)
         Receipt.objects.filter(order_id__in=ids).delete()
+
+
+@app.task(ignore_result=True, name='google_sheets.send_message')  # Пока не актуален, но работает правильно
+def send_message():  # Celery задача для отправки смс на телеграм
+    token = env.str('token')
+    id_ = env.str('id')
+    telegramBot = telepot.Bot(token)
+
+    data = Receipt.objects.filter(delivery_date__gte=datetime.date.today())
+    for dt in data:
+        text = f'Срок вашегоs заказа - {dt.order_id} прошел'
+        telegramBot.sendMessage(id_, text, parse_mode="Markdown")

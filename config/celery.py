@@ -13,6 +13,10 @@ app.conf.beat_schedule = {
         'task': 'google_sheets.update_data',
         'schedule': crontab(minute='*/1'),  # Время работы таска
     },
+    # 'send_message': {  # Для отправки смс на телеграм  # TODO нет секретных ключей из за этого не актуален
+    #     'task': 'google_sheets.send_message',
+    #     'schedule': crontab(hour='*/24'),  # Время работы таска
+    # },
 }
 
 app.autodiscover_tasks()
