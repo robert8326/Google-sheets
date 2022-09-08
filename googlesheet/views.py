@@ -6,10 +6,12 @@ from googlesheet.models import Receipt
 
 
 class GoogleSheetView(View):
+    """ Для просмотра всех Receipt объектов """
+
     def get(self, request):
         date = []
         rubles = []
-        receipts = Receipt.objects.all()
+        receipts = Receipt.objects.all().order_by('source_id')
 
         total = Receipt.objects.all().aggregate(Sum('price_usd'))
 

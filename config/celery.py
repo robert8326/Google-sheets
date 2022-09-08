@@ -9,7 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 app = Celery('google_sheets')
 
 app.conf.beat_schedule = {
-    'update_data': {
+    'update_data': {  # Для обновления данных
         'task': 'google_sheets.update_data',
         'schedule': crontab(minute='*/1'),  # Время работы таска
     },

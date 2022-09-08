@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<div class="content">
+<div class="container">
     <div class="top">
         <img src="{% static 'image/pepsi.jpg' %}">
         <br>
@@ -107,13 +107,13 @@
                 </thead>
                 <tbody>
                 {% for receipt in data %}
-                <tr>
-                    <td scope="row">{{ receipt.source_id }}</td>
-                    <td>{{ receipt.order_id }}</td>
-                    <td>{{ receipt.price_usd }}</td>
-                    <td>{{ receipt.price_rub }}</td>
-                    <td>{{ receipt.delivery_date }}</td>
-                </tr>
+                    <tr>
+                        <td scope="row">{{ receipt.source_id }}</td>
+                        <td>{{ receipt.order_id }}</td>
+                        <td>{{ receipt.price_usd }}</td>
+                        <td>{{ receipt.price_rub }}</td>
+                        <td>{{ receipt.delivery_date }}</td>
+                    </tr>
                 {% endfor %}
                 <tr>
                 </tbody>

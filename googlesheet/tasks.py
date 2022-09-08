@@ -14,8 +14,7 @@ from decimal import Decimal
 
 
 @app.task(ignore_result=True, name='google_sheets.update_data')
-def update_data():
-    """A function to read and write a data from a Google page"""
+def update_data():  # Celery задача для обновления, создания и удаления объектов
     sa = gspread.service_account(filename='google_sheets.json')
     sh = sa.open("Receipt")
     wsk = sh.worksheet("Sheet1")
@@ -25,15 +24,14 @@ def update_data():
     response = requests.get('http://www.cbr.ru/scripts/XML_daily.asp?date_req=' + now, stream=True)
     tree = ElementTree.fromstring(response.content)
 
-    """ Get information about the conversion of dollars to rubles according to the exchange
-         rate of the Central Bank of the Russian Federation """
     for x in tree.iter('Valute'):
         if x.get('ID') == 'R01235':
             worth = x.find('Value').text
             y = worth.replace(',', '.')
             worth = float(y)
 
-    """Saving data to the database """
+    order_id = []
+    receipts = Receipt.objects.all().values_list('order_id', flat=True)
     for data in datas:
         rubles = round(worth, 2) * data['стоимость,$']
         date = datetime.datetime.strptime(data['срок поставки'], '%d.%m.%Y').date()
@@ -47,3 +45,8 @@ def update_data():
                 'delivery_date': date,
             }
         )
+        order_id.append(data['заказ №'])
+
+    if receipts.count() > len(order_id):  # для удаления объектов
+        ids = set(receipts) - set(order_id)
+        Receipt.objects.filter(order_id__in=ids).delete()
