@@ -13,4 +13,3 @@ COPY ./entrypoint.sh /code/
 COPY . /code/
 
 RUN chmod a+x /code/*.sh
-ENTRYPOINT ["/code/entrypoint.sh"]

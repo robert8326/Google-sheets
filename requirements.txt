@@ -3,3 +3,5 @@ environs~=9.5
 Pillow~=9.2
 psycopg2-binary~=2.9.3
 gspread==5.4.0
+celery==5.2.7
+redis~=4.3

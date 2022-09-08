@@ -17,11 +17,45 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    entrypoint: /code/entrypoint.sh
     env_file:
       - .env
     ports:
       - "8000:8000"
     depends_on:
       - db
+
+  redis:
+    image: 'redis'
+    container_name: google_sheets_redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
+  celery:
+    container_name: google_sheets_celery
+    restart: always
+    build: .
+    command: celery -A config worker -l info
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - web
+  celery_beat:
+    container_name: google_sheets_celery_beat
+    restart: always
+    build: .
+    command: celery -A config beat -l info
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - web
+
 volumes:
   pg_data:
+  static_volume:
+  media_volume:

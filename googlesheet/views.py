@@ -3,13 +3,10 @@ from django.shortcuts import render
 from django.views.generic import View
 
 from googlesheet.models import Receipt
-from googlesheet.utils import write
 
 
 class GoogleSheetView(View):
     def get(self, request):
-        write()
-
         date = []
         rubles = []
         receipts = Receipt.objects.all()
